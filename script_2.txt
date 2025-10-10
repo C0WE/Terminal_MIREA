@@ -1,0 +1,20 @@
+# Тест расширенной VFS
+cd system
+ls
+cat version.txt
+cd config
+ls
+cat network.conf
+cd /users
+ls
+cd alice
+ls
+cat todo.txt
+cd projects
+ls
+cat project1.py
+cd /users/bob/music
+ls
+cd /shared
+ls
+cat public.txt
