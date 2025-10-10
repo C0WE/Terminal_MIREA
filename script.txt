@@ -1,0 +1,10 @@
+# Тестовый скрипт для эмулятора
+
+ls
+ls -l
+ls -la
+cd /home/user
+cd "/path with spaces"
+invalid_command_here
+ls --help
+exit
