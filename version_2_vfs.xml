@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vfs>
+    <directory name="system">
+        <file name="version.txt">VkZTIEVtdWxhdG9yIHYxLjANCg==</file>
+        <file name="license">R05VIEdlbmVyYWwgUHVibGljIExpY2Vuc2U=</file>
+        <directory name="bin">
+            <file name="shell">L2Jpbi9zaA==</file>
+            <file name="init">L3NiaW4vaW5pdA==</file>
+        </directory>
+        <directory name="config">
+            <file name="network.conf"> aW50ZXJmYWNlPWV0aDA=</file>
+            <file name="users.db"> dXNlcjpyb290</file>
+        </directory>
+    </directory>
+    <directory name="users">
+        <directory name="alice">
+            <file name="profile.txt"> VXNlcjogQWxpY2U=</file>
+            <file name="todo.txt">MS4gTGVhcm4gVkZTCjIuIFRlc3QgZW11bGF0b3IK</file>
+            <directory name="projects">
+                <file name="project1.py"> cHJpbnQoIkhlbGxvIFZGUyIp</file>
+                <file name="readme.md"> IyBNeSBQcm9qZWN0</file>
+            </directory>
+        </directory>
+        <directory name="bob">
+            <file name="profile.txt"> VXNlcjogQm9i</file>
+            <directory name="music">
+                <file name="song1.mp3"> TVAz</file>
+                <file name="playlist.txt"> bXkgcGxheWxpc3Q=</file>
+            </directory>
+        </directory>
+    </directory>
+    <directory name="shared">
+        <file name="public.txt"> UHVibGljIGluZm9ybWF0aW9u</file>
+        <directory name="temp">
+            <file name="download.tmp"> VGVtcCBmaWxl</file>
+        </directory>
+    </directory>
+</vfs>
