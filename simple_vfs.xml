@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vfs>
+    <directory name="home">
+        <file name="readme.txt">VGVzdCBmaWxlIGNvbnRlbnQ=</file>
+        <file name="note.txt"> UGF0aCB0byBub3Rl</file>
+        <directory name="documents">
+            <file name="document1.txt"> RG9jdW1lbnQgMQ==</file>
+        </directory>
+    </directory>
+    <directory name="var">
+        <directory name="log">
+            <file name="system.log"> U3lzdGVtIGxvZw==</file>
+        </directory>
+    </directory>
+    <directory name="tmp">
+        <file name="temp.txt"> VGVtcCBmaWxl</file>
+    </directory>
+</vfs>
