@@ -18,30 +18,20 @@ from vfs import VFS, create_default_vfs
 
 
 class ShellEmulator(QMainWindow):
-    # Конструктор класса, принимает опциональные пути к VFS и скрипту
     def __init__(self, vfs_path=None, script_path=None):
         super().__init__()
 
-        # Нормализуем пути - преобразуем относительные пути в абсолютные
         self.vfs_path = self.resolve_path(vfs_path) if vfs_path else None
         self.script_path = self.resolve_path(script_path) if script_path else None
 
-        # Инициализируем VFS
         self.vfs = VFS()
 
-        # СНАЧАЛА настраиваем интерфейс
-        self.setWindowTitle(f"Эмулятор - [{os.getlogin()}@{socket.gethostname()}]")
-        self.setGeometry(100, 100, 800, 600)
         self.setup_ui()
-
-        # ПОТОМ загружаем VFS (после создания интерфейса)
         self.load_vfs()
 
-        # Инициализация скрипта
         self.script_commands = []
         self.current_script_line = 0
         self.script_timer = QTimer()
-        # Связываем сигнал таймера с методом выполнения строки скрипта
         self.script_timer.timeout.connect(self.execute_script_line)
 
         self.print_startup_info()
@@ -52,21 +42,18 @@ class ShellEmulator(QMainWindow):
     def resolve_path(self, path):
         """Преобразует относительный путь в абсолютный"""
         try:
-            # Создаем объект Path из переданного пути
             path_obj = Path(path)
 
             if path_obj.is_absolute():
                 return str(path_obj)
 
-            # Получаем директорию, где находится main.py
             script_dir = Path(__file__).parent
             absolute_path = (script_dir / path).resolve()
 
-            print(f"Исходный путь: {path}")  #отладОчка
+            print(f"Исходный путь: {path}")
             print(f"Абсолютный путь: {absolute_path}")
             print(f"Существует: {absolute_path.exists()}")
 
-            # Возвращаем абсолютный путь как строку или исходный путь
             return str(absolute_path)
         except Exception as e:
             print(f"Ошибка в resolve_path: {e}")
@@ -76,8 +63,6 @@ class ShellEmulator(QMainWindow):
         """Загрузка VFS из файла или создание VFS по умолчанию"""
         try:
             if self.vfs_path:
-                # Безопасный вывод (на случай, если интерфейс еще не создан)
-                # Если output_area существует, используем print_output, иначе обычный print
                 safe_print = self.print_output if hasattr(self, 'output_area') else print
 
                 safe_print(f"Пытаемся загрузить VFS из: {self.vfs_path}\n")
@@ -105,17 +90,14 @@ class ShellEmulator(QMainWindow):
         """Настройка пользовательского интерфейса"""
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
-        # Создаем вертикальный layout для центрального виджета
         layout = QVBoxLayout(central_widget)
 
-        # Область вывода
         self.output_area = QTextEdit()
         self.output_area.setReadOnly(True)
         self.output_area.setFont(QFont("Consolas", 10))
         self.output_area.setStyleSheet("background-color: #1e1e1e; color: #d4d4d4;")
         layout.addWidget(self.output_area)
 
-        # Панель статуса (показывает текущий путь в VFS)
         status_frame = QWidget()
         status_layout = QHBoxLayout(status_frame)
         status_layout.setContentsMargins(5, 2, 5, 2)
@@ -131,22 +113,18 @@ class ShellEmulator(QMainWindow):
 
         layout.addWidget(status_frame)
 
-        # Фрейм ввода
         input_frame = QWidget()
         input_layout = QHBoxLayout(input_frame)
 
-        # Метка приглашения
         self.prompt_label = QLabel(">>>")
         self.prompt_label.setStyleSheet("color: #569cd6; font-weight: bold;")
         input_layout.addWidget(self.prompt_label)
 
-        # Поле ввода
         self.input_entry = QLineEdit()
         self.input_entry.setStyleSheet("background-color: #3c3c3c; color: #d4d4d4;")
         self.input_entry.returnPressed.connect(self.execute_command)
         input_layout.addWidget(self.input_entry)
 
-        # Кнопка выполнения
         self.execute_button = QPushButton("Выполнить")
         self.execute_button.clicked.connect(self.execute_command)
         self.execute_button.setStyleSheet("background-color: #0e639c; color: white;")
@@ -154,7 +132,6 @@ class ShellEmulator(QMainWindow):
 
         layout.addWidget(input_frame)
 
-        # Устанавливаем фокус на поле ввода
         self.input_entry.setFocus()
 
     def print_output(self, text):
@@ -187,7 +164,6 @@ class ShellEmulator(QMainWindow):
         self.print_output("Доступные команды: ls, cd, cat, pwd, exit\n")
         self.print_output("Введите команду ниже:\n" + "-" * 40 + "\n")
 
-        # Обновляем отображение пути
         self.update_path_display()
 
     def parse_command(self, input_text):
@@ -204,13 +180,8 @@ class ShellEmulator(QMainWindow):
         if not command_text:
             return
 
-        # Очищаем поле ввода
         self.input_entry.clear()
-
-        # Выводим введенную команду
         self.print_output(f">>> {command_text}\n")
-
-        # Выполняем команду
         self.process_command(command_text)
 
     def process_command(self, command_text):
@@ -223,7 +194,6 @@ class ShellEmulator(QMainWindow):
         command = parts[0].lower()
         args = parts[1:]
 
-        # If-else блок с командами
         if command == "exit":
             self.print_output("Завершение работы эмулятора...\n")
             self.close()
@@ -246,10 +216,7 @@ class ShellEmulator(QMainWindow):
         else:
             self.print_output(f"ОШИБКА: Неизвестная команда '{command}'\n")
 
-        # Обновляем отображение пути после команды
         self.update_path_display()
-
-        # Добавляем разделитель
         self.print_output("-" * 40 + "\n")
 
     def cmd_ls(self, args):
@@ -308,10 +275,9 @@ class ShellEmulator(QMainWindow):
             with open(script_file, 'r', encoding='utf-8') as f:
                 lines = f.readlines()
 
-            # Фильтруем пустые строки и комментарии
             self.script_commands = []
             for line in lines:
-                line = line.strip() # Удаляем пробелы и переносы
+                line = line.strip()
                 if line and not line.startswith('#'):
                     self.script_commands.append(line)
 
@@ -319,7 +285,6 @@ class ShellEmulator(QMainWindow):
             self.print_output(f"Найдено команд: {len(self.script_commands)}\n")
             self.print_output("Запуск скрипта...\n" + "=" * 40 + "\n")
 
-            # Запускаем выполнение скрипта с задержкой
             QTimer.singleShot(1000, self.start_script_execution)
             return True
 
@@ -330,7 +295,7 @@ class ShellEmulator(QMainWindow):
     def start_script_execution(self):
         """Начало выполнения скрипта"""
         if self.script_commands:
-            self.script_timer.start(500)  # Интервал между командами (мс)
+            self.script_timer.start(500)
 
     def execute_script_line(self):
         """Выполнение очередной команды из скрипта"""
@@ -344,10 +309,8 @@ class ShellEmulator(QMainWindow):
         command = self.script_commands[self.current_script_line]
         self.current_script_line += 1
 
-        # Выводим команду как будто её ввел пользователь
         self.print_output(f">>> {command}\n")
 
-        # Выполняем команду (пропускаем ошибочные строки)
         try:
             self.process_command(command)
         except Exception as e:
@@ -365,19 +328,13 @@ def parse_arguments():
 
 
 def main():
-    # Парсим аргументы командной строки
     args = parse_arguments()
 
-    # Создаем и запускаем приложение
     app = QApplication(sys.argv)
-    # Создаем экземпляр эмулятора с переданными аргументами
     emulator = ShellEmulator(vfs_path=args.vfs_path, script_path=args.script)
-    emulator.show() # Показываем кок
+    emulator.show()
     sys.exit(app.exec_())
-    # Запускаем главный цикл приложения и выходим когда он завершится
 
 
-
-# фсё
 if __name__ == "__main__":
     main()
