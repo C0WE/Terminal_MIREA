@@ -35,13 +35,16 @@ class VFSFile(VFSNode):
 class VFSDirectory(VFSNode):
     """Класс директории в VFS"""
 
-    def __init__(self, name: str):
+    def __init__(self, name: str, parent=None):
         super().__init__(name)
         self.children: Dict[str, VFSNode] = {}
+        self.parent = parent
 
     def add_child(self, node: VFSNode):
         """Добавить дочерний узел"""
         self.children[node.name] = node
+        if isinstance(node, VFSDirectory):
+            node.parent = self
 
     def get_child(self, name: str) -> Optional[VFSNode]:
         """Получить дочерний узел по имени"""
@@ -101,7 +104,7 @@ class VFS:
         for child in element:
             if child.tag == 'directory':
                 dir_name = child.get('name', 'unnamed')
-                new_dir = VFSDirectory(dir_name)
+                new_dir = VFSDirectory(dir_name, current_dir)
                 current_dir.add_child(new_dir)
                 self._parse_xml_element(child, new_dir)
 
@@ -126,17 +129,15 @@ class VFS:
             self.current_path = "/"
             return True
 
+        # Обработка абсолютных и относительных путей
         if path.startswith("/"):
-            # Абсолютный путь
             target_dir = self._resolve_absolute_path(path)
         else:
-            # Относительный путь
             target_dir = self._resolve_relative_path(path)
 
         if target_dir and isinstance(target_dir, VFSDirectory):
             self.current_directory = target_dir
-            # Обновляем текущий путь
-            self.current_path = self._get_path_for_directory(target_dir)
+            self.current_path = self._get_full_path(target_dir)
             return True
 
         return False
@@ -148,13 +149,14 @@ class VFS:
 
         for part in parts:
             if part == "..":
-                # Для абсолютных путей ".." не имеет смысла от корня
-                continue
-            if not isinstance(current, VFSDirectory):
-                return None
-            current = current.get_child(part)
-            if current is None:
-                return None
+                if current.parent is not None:
+                    current = current.parent
+            else:
+                if not isinstance(current, VFSDirectory):
+                    return None
+                current = current.get_child(part)
+                if current is None:
+                    return None
 
         return current
 
@@ -165,29 +167,31 @@ class VFS:
 
         for part in parts:
             if part == "..":
-                # Переход на уровень выше (упрощенная реализация)
-                if current == self.root:
-                    continue  # Уже в корне
-                # В реальной реализации нужно отслеживать родительские директории
-                continue
-            if not isinstance(current, VFSDirectory):
-                return None
-            current = current.get_child(part)
-            if current is None:
-                return None
+                if current.parent is not None:
+                    current = current.parent
+            else:
+                if not isinstance(current, VFSDirectory):
+                    return None
+                current = current.get_child(part)
+                if current is None:
+                    return None
 
         return current
 
-    def _get_path_for_directory(self, directory: VFSDirectory) -> str:
-        """
-        Получить путь для директории (упрощенная реализация)
-        В реальной системе нужно хранить ссылки на родительские директории
-        """
-        # В этой упрощенной реализации мы не отслеживаем полный путь
-        # Для демонстрации будем использовать упрощенный подход
+    def _get_full_path(self, directory: VFSDirectory) -> str:
+        """Получить полный путь для директории"""
         if directory == self.root:
             return "/"
-        return f"/{directory.name}"
+
+        parts = []
+        current = directory
+
+        while current != self.root and current is not None:
+            parts.append(current.name)
+            current = current.parent
+
+        parts.reverse()
+        return "/" + "/".join(parts)
 
     def list_current_directory(self) -> List[str]:
         """Получить список содержимого текущей директории"""
@@ -213,9 +217,9 @@ def create_default_vfs() -> VFS:
     vfs = VFS()
 
     # Создаем базовую структуру
-    home_dir = VFSDirectory("home")
-    documents_dir = VFSDirectory("documents")
-    downloads_dir = VFSDirectory("downloads")
+    home_dir = VFSDirectory("home", vfs.root)
+    documents_dir = VFSDirectory("documents", home_dir)
+    downloads_dir = VFSDirectory("downloads", home_dir)
 
     # Создаем файлы
     readme_file = VFSFile("readme.txt", "SGVsbG8gVkZTIEVtdWxhdG9yIQ==")  # "Hello VFS Emulator!"
@@ -229,7 +233,7 @@ def create_default_vfs() -> VFS:
 
     # Добавляем в корневую директорию
     vfs.root.add_child(home_dir)
-    vfs.root.add_child(VFSDirectory("tmp"))
-    vfs.root.add_child(VFSDirectory("var"))
+    vfs.root.add_child(VFSDirectory("tmp", vfs.root))
+    vfs.root.add_child(VFSDirectory("var", vfs.root))
 
     return vfs
