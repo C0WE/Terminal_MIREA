@@ -15,9 +15,9 @@
 -  **Поддержка скриптов** - автоматическое выполнение команд из файла
 -  **Сохранение/загрузка** - работа с XML-файлами VFS
 -  **Темная тема** - комфортная работа при длительном использовании
--  <img width="623" height="521" alt="image" src="https://github.com/user-attachments/assets/6897ff5b-3873-4dfe-84c3-1f2a2d6cbc61" />
--  <img width="626" height="526" alt="image" src="https://github.com/user-attachments/assets/2e15fc48-2239-4946-a079-c9aa98bbcb72" />
--  <img width="622" height="525" alt="image" src="https://github.com/user-attachments/assets/c6800d55-a6b0-47ee-8819-018f8e9d2118" />
+  <img width="623" height="521" alt="image" src="https://github.com/user-attachments/assets/6897ff5b-3873-4dfe-84c3-1f2a2d6cbc61" />
+  <img width="626" height="526" alt="image" src="https://github.com/user-attachments/assets/2e15fc48-2239-4946-a079-c9aa98bbcb72" />
+  <img width="622" height="525" alt="image" src="https://github.com/user-attachments/assets/c6800d55-a6b0-47ee-8819-018f8e9d2118" />
 
 
 
