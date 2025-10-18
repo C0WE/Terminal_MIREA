@@ -34,3 +34,23 @@
 
 ```bash
 pip install PyQt5
+```
+##  Запуск
+```bash
+python main.py
+```
+### С загрузкой VFS
+```bash
+python main.py --vfs-path version_2_vfs.xml
+```
+### Со скриптом
+```bash
+python main.py --script script_2.txt
+```
+### Оба параметра
+```bash
+python main.py --vfs-path version_2_vfs.xml --script script_2.txt
+
+
+
+
